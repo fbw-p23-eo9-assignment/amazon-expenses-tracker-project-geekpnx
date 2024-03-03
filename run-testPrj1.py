@@ -1,9 +1,23 @@
 import os
 import re
 import time
+import sys
+
 
 MAX_ATTEMPTS = 3
 DELAY_SECONDS = 5
+
+
+#--------------- SPINNING BAR ---------------------
+
+def spinning_bar():
+    chars = "/—\\|"
+    for _ in range(20):
+        for char in chars:
+            sys.stdout.write('\r' + f'Loading {char} ')
+            sys.stdout.flush()
+            time.sleep(0.1)
+    print("\nLoading complete!")
 
 #------------------- LABEL ----------------------------------
 
@@ -51,9 +65,9 @@ def register_user(users_dict):
         username = input("Create username: ")
 
         if username in users_dict:
-            print("\nUsername already exists. Please choose a different username.")
+            print("\n** Username already exists **.\nPlease choose a different username.\n")
         elif not re.match(r'^[a-zA-Z0-9_]+$', username):
-            print("\nInvalid username. Please follow the criteria.")
+            print("\n** Invalid username! **\n\nPlease follow the criteria:\n- Lower case [a-z]\n- Upper case [A-Z]\n- Numbers [e.i 0-9]\n- Underscore ['_']\n")
         else:
             break
 
@@ -61,20 +75,20 @@ def register_user(users_dict):
         password = input("Create password: ")
 
         if not re.match(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{6,20}$', password):
-            print("\nInvalid password. Please follow the criteria.")
+            print("\n** Invalid password! **\n\nPlease follow the criteria:\n- Between 6 to 20 charecters in length\n- At least one upper case [A-Z]\n- At least one number [e.i 0-9]\n- At least one special Characters\n")
         else:
             break
 
     while True:
-        phone_number = input("Enter German phone number (with code +49): ")
+        phone_number = input("Enter your mobile number (with the code +49): ")
 
         if not re.match(r'^\+49\d{10}$', phone_number):
-            print("\nInvalid German phone number format. Please enter a valid number.")
+            print("\n\n** Invalid mobile number! **\n\nPlease follow the criteria:\n- German mobile number [e.i +491234567890]\n- At least 12 digit numbers\n")
         else:
             break
 
     users_dict[username] = {'password': password, 'phone_number': phone_number}
-    print("\nRegistration successful!")
+    print(f"\n** Registration successful! **\n\n{username}, you can select option 2. to Login.\n\nOr, option 3. to Exit")
     return True
 
 #--------------------------------------- LOGIN -----------------------------------------
@@ -110,13 +124,10 @@ if __name__ == "__main__":
     user_credentials = {}
 
 #------------------------------------ MAIN 2 -------------------------------
-import os
-import re
-import time
 
 
 def print_menu():
-    print("\nMenu:\n1. Enter a purchase\n2. Generate a report\n3. Quit")
+    print("\n•••\n1. Enter a purchase\n2. Generate a report\n3. Quit")
 
 
 def calculate_delivery_charges(purchases):
@@ -159,8 +170,9 @@ def enter_purchase(purchases):
     os.system('clear')
     print_box_with_text(width=None, text=None)
     padding()
-    label(f'please, enter your purchase',3, 1)
+    label(f"You may enter your purchase here",3, 1)
     lineFunc()
+    padding()
     date = input("Enter the date of the purchase (MM/DD/YYYY or MM-DD-YYYY): ")
     item = input("Enter the item purchased (at least 3 characters): ")
     
@@ -171,11 +183,11 @@ def enter_purchase(purchases):
             quantity = int(input("Enter the quantity purchased (should be an integer from 1 and above): "))
             
             if quantity <= 0:
-                raise ValueError("Quantity should be an integer from 1 and above.")
+                raise ValueError("\nQuantity should be an integer from 1 and above.")
             
             break
         except ValueError as e:
-            print(f"Invalid input: {e}. Please enter the correct value.")
+            print(f"\nInvalid input: {e}. Please enter the correct value.")
 
     purchases.append({
         'date': date,
@@ -185,14 +197,14 @@ def enter_purchase(purchases):
         'quantity': quantity
     })
     
-    print("Purchase entered successfully!")
+    print("\n** Purchase entered successfully! **")
 
 
 def generate_report(purchases):
     os.system('clear')
     print_box_with_text(width=None, text=None)
     padding()
-    label(f'report will be generated',3, 1)
+    label(f'We will generate the report',3, 1)
     lineFunc()   
     if not purchases:
         print("\nNo purchases entered. Please enter at least one purchase.")
@@ -203,19 +215,20 @@ def generate_report(purchases):
     most_expensive, least_expensive = find_expensive_orders(purchases)
     average_cost = calculate_average_cost(purchases)
     spending_limit_exceeded = check_spending_limit(purchases)
-
+    padding()
+    spinning_bar()
     print("\nGenerating report... (please wait)")
     time.sleep(2)
 
     print("\n*** Amazon Expense Tracker Report ***")
     print(f"\nTotal charges for delivery: {delivery_charges:.2f} EURO")
-    print(f"\nCosts of items (excluding delivery charges): {item_costs:.2f} EURO")
+    print(f"Costs of items (excluding delivery charges): {item_costs:.2f} EURO")
     
     if most_expensive and least_expensive:
-        print(f"\nMost expensive order: {most_expensive['item']} ({most_expensive['total_cost']:.2f} EURO)")
-        print(f"\nLeast expensive order: {least_expensive['item']} ({least_expensive['total_cost']:.2f} EURO)")
+        print(f"Most expensive order: {most_expensive['item']} ({most_expensive['total_cost']:.2f} EURO)")
+        print(f"Least expensive order: {least_expensive['item']} ({least_expensive['total_cost']:.2f} EURO)")
     
-    print(f"\nAverage cost per order: {average_cost:.2f} EURO")
+    print(f"Average cost per order: {average_cost:.2f} EURO")
     
     if spending_limit_exceeded:
         print("\nWarning: You have exceeded the spending limit of 500 EURO.")
@@ -229,7 +242,7 @@ def main():
     label('welcome',3, 1)
     lineFunc()
     while True:
-        print("\nMenu:\n1. Register\n2. Login\n3. Exit")
+        print("\n•••\n1. Registration\n2. Login\n3. Exit")
         choice = input("\nSelect an option (1/2/3): ")
 
         if choice == '1':
@@ -245,14 +258,15 @@ def main():
         else:
             print("\nInvalid choice. Please enter 1, 2, or 3.")
 
-#---------------------------------
+#--------------------------------- MAIN2 ---------------
 
 def main2(username):
+    
     os.system('clear')
     purchases = []
     print_box_with_text(width=None, text=None)
     padding()
-    label(f'Hi,{username.capitalize()}',3, 1)
+    label(f'{username}, you are in menu purchase!',3, 1)
     lineFunc()
     while True:
         print_menu()

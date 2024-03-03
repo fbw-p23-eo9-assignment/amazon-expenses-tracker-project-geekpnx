@@ -3,8 +3,10 @@ import re
 import time
 import sys
 
+
 MAX_ATTEMPTS = 3
 DELAY_SECONDS = 5
+
 
 #--------------- SPINNING BAR ---------------------
 
@@ -63,9 +65,9 @@ def register_user(users_dict):
         username = input("Create username: ")
 
         if username in users_dict:
-            print("\nUsername already exists. Please choose a different username.")
+            print("\n** Username already exists **.\nPlease choose a different username.\n")
         elif not re.match(r'^[a-zA-Z0-9_]+$', username):
-            print("\nInvalid username. Please follow the criteria.")
+            print("\n** Invalid username! **\n\nPlease follow the criteria:\n- Lower case [a-z]\n- Upper case [A-Z]\n- Numbers [e.i 0-9]\n- Underscore ['_']\n")
         else:
             break
 
@@ -73,7 +75,7 @@ def register_user(users_dict):
         password = input("Create password: ")
 
         if not re.match(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{6,20}$', password):
-            print("\nInvalid password. Please follow the criteria.")
+            print("\n** Invalid password! **\n\nPlease follow the criteria:\n- Between 6 to 20 charecters in length\n- At least one upper case [A-Z]\n- At least one number [e.i 0-9]\n- At least one special Characters\n")
         else:
             break
 
@@ -81,12 +83,12 @@ def register_user(users_dict):
         phone_number = input("Enter your mobile number (with the code +49): ")
 
         if not re.match(r'^\+49\d{10}$', phone_number):
-            print("\nInvalid German phone number format. Please enter a valid number.")
+            print("\n\n** Invalid mobile number! **\n\nPlease follow the criteria:\n- German mobile number [e.i +491234567890]\n- At least 12 digit numbers\n")
         else:
             break
 
     users_dict[username] = {'password': password, 'phone_number': phone_number}
-    print(f"\nRegistration successful! {username}, you can select option 2. to login.")
+    print(f"\n** Registration successful! **\n\n{username}, you can select option 2. to Login.\n\nOr, option 3. to Exit")
     return True
 
 #--------------------------------------- LOGIN -----------------------------------------
@@ -122,9 +124,6 @@ if __name__ == "__main__":
     user_credentials = {}
 
 #------------------------------------ MAIN 2 -------------------------------
-import os
-import re
-import time
 
 
 def print_menu():
@@ -198,7 +197,7 @@ def enter_purchase(purchases):
         'quantity': quantity
     })
     
-    print("\nPurchase entered successfully!")
+    print("\n** Purchase entered successfully! **")
 
 
 def generate_report(purchases):
@@ -216,6 +215,7 @@ def generate_report(purchases):
     most_expensive, least_expensive = find_expensive_orders(purchases)
     average_cost = calculate_average_cost(purchases)
     spending_limit_exceeded = check_spending_limit(purchases)
+    padding()
     spinning_bar()
     print("\nGenerating report... (please wait)")
     time.sleep(2)
@@ -261,11 +261,12 @@ def main():
 #--------------------------------- MAIN2 ---------------
 
 def main2(username):
+    
     os.system('clear')
     purchases = []
     print_box_with_text(width=None, text=None)
     padding()
-    label(f'{username}, you ready to enter your purchese!',3, 1)
+    label(f'{username}, you are in menu purchase!',3, 1)
     lineFunc()
     while True:
         print_menu()
